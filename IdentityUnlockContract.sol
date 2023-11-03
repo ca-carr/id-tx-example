@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+// ID-hash_id: 0xab8483f64d9c6000000000000000000000000000000000000000000000000000
+
 contract IdentityUnlockContract {
     // State variable to store the identity hash
     bytes32 private identityHash;
     string private id_mask;
-    bytes32 private unlock;
-    bytes32 private  maskedID;
+    string private unlock_string;
+    bytes32 public unlock_chal;
+    bytes32 public  maskedID;
     string private id;
+    bytes32 public recid;
 
     // Address of the legitimate user
     address private owner;
@@ -27,13 +31,15 @@ contract IdentityUnlockContract {
     }
 
     // Constructor to set the initial identity hash and the owner
-    constructor(bytes32 _identityHash, string memory _id, string memory _id_mask, bytes32 _unlock) {
+    constructor(bytes32 _identityHash, string memory _id, string memory _id_mask, string memory _unlock, address _interAddress) payable {
         id = _id;
         id_mask = _id_mask;
-        unlock = _unlock;
+        unlock_string = _unlock;
+        unlock_chal = keccak256(abi.encode(unlock_string));
         identityHash = _identityHash;
         maskedID = keccak256(abi.encode(_id, _id_mask));
-        owner = msg.sender;
+        //owner = msg.sender;
+        owner = _interAddress;
     }
 
     // Function to change the identity hash, only if the caller is the owner
