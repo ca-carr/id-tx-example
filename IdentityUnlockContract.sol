@@ -11,22 +11,15 @@ contract IdentityUnlockContract {
     address public recadd = address(0); // Initialize to the zero address
     address public owner; // Owner's address, in this case the owener is the intermediary 
 
-    // Event to emit when the receiving address is changed
     event ReceivingAddressChanged(address newReceivingAddress);
-    // Event to emit when an attempt to change the receiving address fails
     event ReceivingAddressChangeFailed(string reason);
 
-    // Modifier to restrict function execution to the contract owner only
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can perform this action.");
         _;
     }
 
-    //function lockEther() external payable {
-    //    emit EtherLocked(msg.sender, msg.value);
-    //}
-
-    // Constructor to set the initial identity hash and the owner
+    // Main constructor to set id, mask, unlock and the address of the intermediary
     constructor(string memory _id, string memory _id_mask, string memory _unlock, address _interAddress) payable {
         id = _id;
         id_mask = _id_mask;
@@ -36,7 +29,6 @@ contract IdentityUnlockContract {
         //owner = msg.sender;
         owner = _interAddress;
     }
-
 
     // Function to establish the receiving address, only if the caller is the intremediary owner
     function changeReceivingAddress(address _newAddress, string memory _id, string memory _id_mask) public onlyOwner {
@@ -69,19 +61,17 @@ contract IdentityUnlockContract {
             { return false; }
     }
 
-
-        function z_pay(string memory _unlock) public {
-        // Check that recadd is not the zero address.
-        require(recadd != address(0), "Receiving address is not set.");
+        function payout(string memory _unlock) public {
+        // Check that recadd is not the zero address
+        require(recadd != address(0), "Receiving address not set");
 
         // Check that the unlock condition is true.
-        require(checkUnlock(_unlock), "Unlock condition is not satisfied.");
+        require(checkUnlock(_unlock), "Unlock condition not met");
 
-        // Send all the Ether in the contract to the receiving address.
+        // Send all funds in the contract to the receiving address.
         (bool sent, ) = recadd.call{value: address(this).balance}("");
         require(sent, "Failed to send Ether");
     }
-
 
 
 }
