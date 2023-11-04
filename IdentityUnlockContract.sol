@@ -46,13 +46,9 @@ contract IdentityUnlockContract {
     function verifyID(string memory _id, string memory _id_mask) public view returns (bool) {
         bytes32 _maskedID = keccak256(abi.encode(_id, _id_mask));
         if (_maskedID == maskedID) 
-            {  
-                return true;
-            } 
+            {  return true; } 
         else 
-            {
-                return false;
-            }
+            { return false; }
     }
     function checkUnlock(string memory _unlock) public view returns (bool) {
         if (unlock_chal == keccak256(abi.encode( _unlock))) 
@@ -72,6 +68,4 @@ contract IdentityUnlockContract {
         (bool sent, ) = recadd.call{value: address(this).balance}("");
         require(sent, "Failed to send Ether");
     }
-
-
 }
